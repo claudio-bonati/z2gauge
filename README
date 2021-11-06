@@ -1,0 +1,37 @@
+*********************************************************************
+********* PROGRAM FOR SIMULATION OF LATTICE CP^(N-1) MODELS *********
+*******************   WITH COMPACT U(1) GAUGE  **********************
+*********************************************************************
+
+** ACTION
+*****************************************************
+
+The partition function is written as Z=\sum e^{-S}
+
+S = - J \sum_{x, mu>0} lambda_{x,mu}
+    - K \sum_{plaq} plaq
+
+and J is related to K by the duality relation J=-0.5*ln(tanh(K))
+
+DEBUG : several sanity checks are activated, which significantly slow-down the algorithm.
+
+** CONFIGURE PARAMETERS
+*****************************************************
+
+The following macro is availbale
+
+ST_dim      spacetime dimensionality (default 3)
+
+After the configuration, the compilation is performed as usual by
+make
+
+Calling the executable without input file the configuration options are shown
+and the template file "template_input.in" is produced.
+
+
+** INPUT FILE AND SOME CONVENTIONS
+*****************************************************
+
+A template input file is created when calling the executable without input file
+and everything following # (up to carriage return) in the input file is
+interpreted as a comment.
