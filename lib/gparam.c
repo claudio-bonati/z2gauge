@@ -293,6 +293,8 @@ void init_data_file(FILE **dataf, GParam const * const param)
          {
          fprintf(*dataf, "%d ", param->d_size[i]);
          }
+      fprintf(*dataf, "%.12g ", param->d_K);
+      fprintf(*dataf, "%.12g ", param->d_J);
       fprintf(*dataf, "\n");
       }
     }
@@ -304,6 +306,8 @@ void init_data_file(FILE **dataf, GParam const * const param)
        {
        fprintf(*dataf, "%d ", param->d_size[i]);
        }
+    fprintf(*dataf, "%.12g ", param->d_K);
+    fprintf(*dataf, "%.12g ", param->d_J);
     fprintf(*dataf, "\n");
     }
   fflush(*dataf);
