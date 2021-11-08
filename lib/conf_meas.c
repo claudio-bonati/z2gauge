@@ -104,7 +104,7 @@ void perform_measures(Conf *GC,
    fprintf(datafilep, "%ld %ld ", avlink, plaq);
    fprintf(datafilep, "\n");
 
-   //fflush(datafilep);
+   fflush(datafilep);
    }
 
 

@@ -287,7 +287,7 @@ void compute_md5sum_conf(char *res, Conf const * const GC, GParam const * const 
 
         if(endian()==0) // little endian
           {
-          SwapBytesDouble(&i);
+          SwapBytesInt(&i);
           }
 
         MD5_Update(&mdContext, &i, sizeof(int));
