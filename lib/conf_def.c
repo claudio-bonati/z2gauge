@@ -23,7 +23,7 @@ void init_conf(Conf *GC,
   int err;
 
   // allocate the lattice
-  err=posix_memalign((void**) &(GC->lambda), (size_t) DOUBLE_ALIGN, (size_t) param->d_volume * sizeof(int *));
+  err=posix_memalign((void**) &(GC->lambda), (size_t) INT_ALIGN, (size_t) param->d_volume * sizeof(int *));
   if(err!=0)
     {
     fprintf(stderr, "Problems in allocating the lattice! (%s, %d)\n", __FILE__, __LINE__);
@@ -31,7 +31,7 @@ void init_conf(Conf *GC,
     }
   for(r=0; r<(param->d_volume); r++)
      {
-     err=posix_memalign((void**)&(GC->lambda[r]), (size_t) DOUBLE_ALIGN, (size_t )STDIM * sizeof(int));
+     err=posix_memalign((void**)&(GC->lambda[r]), (size_t) INT_ALIGN, (size_t )STDIM * sizeof(int));
      if(err!=0)
        {
        fprintf(stderr, "Problems in allocating the lattice! (%s, %d)\n", __FILE__, __LINE__);
