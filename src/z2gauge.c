@@ -39,7 +39,7 @@ void real_main(char *in_file)
     init_geometry(&geo, &param);
 
     // initialize configuration
-    init_conf(&GC, &param);
+    init_conf(&GC, &geo, &param);
 
     // acceptance
     acc_link=0.0;
@@ -114,13 +114,19 @@ void print_template_input(void)
     {
     fprintf(fp, "size 4 4 4\n");
     fprintf(fp,"\n");
-    //fprintf(fp, "J 1.0\n");
+    fprintf(fp, "J 1.0\n");
     fprintf(fp, "K 2.0\n");
     fprintf(fp,"\n");
     fprintf(fp, "sample    10\n");
     fprintf(fp, "thermal   0\n");
     fprintf(fp, "measevery 1\n");
     fprintf(fp,"\n");
+    #ifdef GAUGE_FIX
+      fprintf(fp, "quench_gamma 1\n");
+      fprintf(fp, "quench_sample 100\n");
+      fprintf(fp, "quench_thermal 10\n");
+      fprintf(fp, "quench_measevery 10\n");
+    #endif
     fprintf(fp, "start                   0  # 0=ordered  1=random  2=from saved configuration\n");
     fprintf(fp, "saveconf_back_every     5  # if 0 does not save, else save backup configurations every ... updates\n");
     fprintf(fp, "\n");

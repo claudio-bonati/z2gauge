@@ -11,11 +11,13 @@ The partition function is written as Z=\sum e^{-S}, lambda_{x,mu}=+1,-1
 S = - J \sum_{x, mu>0} lambda_{x,mu}
     - K \sum_{plaq} plaq
 
-and J is related to K by the duality relation J=-0.5*ln(tanh(K)) (see
-lib/gparam.c Obviously with minimal modifications K can be kept as a free
-parameter)
+### add gamma
+
+Macro:
 
 DEBUG : several sanity checks are activated, which significantly slow-down the algorithm.
+GAUGE_FIX
+OPEN_BC : open boundary conditions
 
 ** CONFIGURE PARAMETERS
 *****************************************************

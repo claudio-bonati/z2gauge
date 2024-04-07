@@ -19,6 +19,12 @@ typedef struct GParam {
   int d_thermal;
   int d_measevery;
 
+  // for quenched averages if GAUGE_FIX is defined
+  double d_quench_gamma;
+  int d_quench_sample;
+  int d_quench_thermal;
+  int d_quench_measevery;
+
   // initialization & saving
   int d_start;
   int d_saveconf_back_every;

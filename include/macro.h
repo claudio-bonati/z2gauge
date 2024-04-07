@@ -5,6 +5,9 @@
 
 //#define DEBUG  // activate some debug tests
 
+//#define GAUGE_FIX
+//#define OPEN_BC
+
 // function to access matrix elements
 #define m(X,Y) ((X)*NFLAVOUR + (Y))
 

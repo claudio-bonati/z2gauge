@@ -1,4 +1,4 @@
-bin_PROGRAMS = z2broken
+bin_PROGRAMS = z2gauge
 
 conf = ./include/conf.h \
        ./lib/conf_def.c \
@@ -33,7 +33,7 @@ random = ./include/myrngparam.h \
          ./include/random.h \
          ./lib/random.c 
 
-z2broken_SOURCES=./src/z2broken.c \
+z2gauge_SOURCES=./src/z2gauge.c \
                  $(conf) \
                  $(dSFMT) \
                  $(endian) \

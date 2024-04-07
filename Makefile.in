@@ -86,7 +86,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = z2broken$(EXEEXT)
+bin_PROGRAMS = z2gauge$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -110,11 +110,11 @@ am__objects_3 = ./lib/endianness.$(OBJEXT)
 am__objects_4 = ./lib/geometry.$(OBJEXT)
 am__objects_5 = ./lib/gparam.$(OBJEXT)
 am__objects_6 = ./lib/random.$(OBJEXT)
-am_z2broken_OBJECTS = ./src/z2broken.$(OBJEXT) $(am__objects_1) \
+am_z2gauge_OBJECTS = ./src/z2gauge.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) $(am__objects_3) $(am__objects_4) \
 	$(am__objects_5) $(am__objects_6)
-z2broken_OBJECTS = $(am_z2broken_OBJECTS)
-z2broken_LDADD = $(LDADD)
+z2gauge_OBJECTS = $(am_z2gauge_OBJECTS)
+z2gauge_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -143,8 +143,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(z2broken_SOURCES)
-DIST_SOURCES = $(z2broken_SOURCES)
+SOURCES = $(z2gauge_SOURCES)
+DIST_SOURCES = $(z2gauge_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -314,7 +314,7 @@ random = ./include/myrngparam.h \
          ./include/random.h \
          ./lib/random.c 
 
-z2broken_SOURCES = ./src/z2broken.c \
+z2gauge_SOURCES = ./src/z2gauge.c \
                  $(conf) \
                  $(dSFMT) \
                  $(endian) \
@@ -426,7 +426,7 @@ src/$(am__dirstamp):
 src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) ./src/$(DEPDIR)
 	@: > src/$(DEPDIR)/$(am__dirstamp)
-./src/z2broken.$(OBJEXT): src/$(am__dirstamp) \
+./src/z2gauge.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 lib/$(am__dirstamp):
 	@$(MKDIR_P) ./lib
@@ -451,9 +451,9 @@ lib/$(DEPDIR)/$(am__dirstamp):
 ./lib/random.$(OBJEXT): lib/$(am__dirstamp) \
 	lib/$(DEPDIR)/$(am__dirstamp)
 
-z2broken$(EXEEXT): $(z2broken_OBJECTS) $(z2broken_DEPENDENCIES) $(EXTRA_z2broken_DEPENDENCIES) 
-	@rm -f z2broken$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(z2broken_OBJECTS) $(z2broken_LDADD) $(LIBS)
+z2gauge$(EXEEXT): $(z2gauge_OBJECTS) $(z2gauge_DEPENDENCIES) $(EXTRA_z2gauge_DEPENDENCIES) 
+	@rm -f z2gauge$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(z2gauge_OBJECTS) $(z2gauge_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -471,7 +471,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./lib/$(DEPDIR)/geometry.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./lib/$(DEPDIR)/gparam.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./lib/$(DEPDIR)/random.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./src/$(DEPDIR)/z2broken.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./src/$(DEPDIR)/z2gauge.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\

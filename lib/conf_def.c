@@ -17,10 +17,15 @@
 
 
 void init_conf(Conf *GC,
+               Geometry const * const geo,
                GParam const * const param)
   {
-  long r, j;
-  int err;
+  long r;
+  int j, err;
+
+  #ifndef OPEN_BC
+  (void) geo; // just to avoid warnings
+  #endif
 
   // allocate the lattice
   err=posix_memalign((void**) &(GC->lambda), (size_t) INT_ALIGN, (size_t) param->d_volume * sizeof(int *));
@@ -49,6 +54,12 @@ void init_conf(Conf *GC,
        for(j=0; j<STDIM; j++)
           {
           GC->lambda[r][j]=1;
+          #ifdef OPEN_BC
+          if(bcsitep(geo, r, j)==-1)
+            {
+            GC->lambda[r][j]=0;
+            }
+          #endif
           }
        }
     }
@@ -69,6 +80,13 @@ void init_conf(Conf *GC,
             {
             GC->lambda[r][j]=-1;
             }
+
+          #ifdef OPEN_BC
+          if(bcsitep(geo, r, j)==-1)
+            {
+            GC->lambda[r][j]=0;
+            }
+          #endif
           }
        }
     }
@@ -76,6 +94,19 @@ void init_conf(Conf *GC,
   if(param->d_start==2) // initialize from stored conf
     {
     read_conf(GC, param);
+
+    #ifdef OPEN_BC
+    for(r=0; r<(param->d_volume); r++)
+       {
+       for(j=0; j<STDIM; j++)
+          {
+          if(bcsitep(geo, r, j)==-1)
+            {
+            GC->lambda[r][j]=0;
+            }
+          }
+       }
+    #endif
     }
   }
 

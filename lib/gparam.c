@@ -100,17 +100,16 @@ void readinput(char *in_file, GParam *param)
                 }
              }
 
-           //else if(strncmp(str, "J", 1)==0)
-           //       {
-           //       err=fscanf(input, "%lf", &temp_d);
-           //       if(err!=1)
-           //         {
-           //         fprintf(stderr, "Error in reading the file %s (%s, %d)\n", in_file, __FILE__, __LINE__);
-           //         exit(EXIT_FAILURE);
-           //         }
-           //       param->d_J=temp_d;
-           //       }
-
+           else if(strncmp(str, "J", 1)==0)
+                  {
+                  err=fscanf(input, "%lf", &temp_d);
+                  if(err!=1)
+                    {
+                    fprintf(stderr, "Error in reading the file %s (%s, %d)\n", in_file, __FILE__, __LINE__);
+                    exit(EXIT_FAILURE);
+                    }
+                  param->d_J=temp_d;
+                  }
            else if(strncmp(str, "K", 1)==0)
                   {
                   err=fscanf(input, "%lf", &temp_d);
@@ -120,7 +119,7 @@ void readinput(char *in_file, GParam *param)
                     exit(EXIT_FAILURE);
                     }
                   param->d_K=temp_d;
-                  param->d_J=-0.5*log(tanh(param->d_K));
+//                  param->d_J=-0.5*log(tanh(param->d_K));
                   }
 
            else if(strncmp(str, "sample", 6)==0)
@@ -153,7 +152,50 @@ void readinput(char *in_file, GParam *param)
                     }
                   param->d_measevery=temp_i;
                   }
-          
+
+           #ifdef GAUGE_FIX
+           else if(strncmp(str, "quench_gamma", 12)==0)
+                  {
+                  err=fscanf(input, "%lf", &temp_d);
+                  if(err!=1)
+                    {
+                    fprintf(stderr, "Error in reading the file %s (%s, %d)\n", in_file, __FILE__, __LINE__);
+                    exit(EXIT_FAILURE);
+                    }
+                  param->d_quench_gamma=temp_d;
+                  }
+           else if(strncmp(str, "quench_sample", 13)==0)
+                  {
+                  err=fscanf(input, "%d", &temp_i);
+                  if(err!=1)
+                    {
+                    fprintf(stderr, "Error in reading the file %s (%s, %d)\n", in_file, __FILE__, __LINE__);
+                    exit(EXIT_FAILURE);
+                    }
+                  param->d_quench_sample=temp_i;
+                  }
+           else if(strncmp(str, "quench_thermal", 14)==0)
+                  {
+                  err=fscanf(input, "%d", &temp_i);
+                  if(err!=1)
+                    {
+                    fprintf(stderr, "Error in reading the file %s (%s, %d)\n", in_file, __FILE__, __LINE__);
+                    exit(EXIT_FAILURE);
+                    }
+                  param->d_quench_thermal=temp_i;
+                  }
+           else if(strncmp(str, "quench_measevery", 16)==0)
+                  {
+                  err=fscanf(input, "%d", &temp_i);
+                  if(err!=1)
+                    {
+                    fprintf(stderr, "Error in reading the file %s (%s, %d)\n", in_file, __FILE__, __LINE__);
+                    exit(EXIT_FAILURE);
+                    }
+                  param->d_quench_measevery=temp_i;
+                  }
+           #endif
+
            else if(strncmp(str, "start", 5)==0)
                   { 
                   err=fscanf(input, "%d", &temp_i);

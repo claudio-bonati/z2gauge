@@ -1,5 +1,5 @@
 AC_PREREQ([2.59])
-AC_INIT([z2broken], [0.0.2], [claudio.bonati82@gmail.com])
+AC_INIT([z2gauge], [0.0.2], [claudio.bonati82@gmail.com])
 AM_INIT_AUTOMAKE(subdir-objects)
 AC_CONFIG_SRCDIR([./include/macro.h])
 AC_CONFIG_HEADERS([config.h])

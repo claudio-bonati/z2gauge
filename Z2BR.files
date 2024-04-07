@@ -26,4 +26,4 @@ lib/endianness.c
 lib/geometry.c
 lib/gparam.c
 lib/random.c
-src/z2broken.c
+src/z2gauge.c

@@ -17,6 +17,7 @@ typedef struct Conf {
 
 // in conf_def.c
 void init_conf(Conf *GC,
+               Geometry const * const geo,
                GParam const * const param);
 void read_conf(Conf *GC,
                GParam const * const param);
