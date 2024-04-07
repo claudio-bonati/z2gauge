@@ -368,9 +368,9 @@ void print_parameters(GParam const * const param,
     double diff_sec;
 
     fp=fopen(param->d_log_file, "w");
-    fprintf(fp, "+---------------------------------+\n");
-    fprintf(fp, "| Simulation details for z2broken |\n");
-    fprintf(fp, "+---------------------------------+\n\n");
+    fprintf(fp, "+--------------------------------+\n");
+    fprintf(fp, "| Simulation details for z2gauge |\n");
+    fprintf(fp, "+--------------------------------+\n\n");
 
     #ifdef DEBUG
      fprintf(fp, "DEBUG mode\n");

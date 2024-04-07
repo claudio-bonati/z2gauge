@@ -17,8 +17,9 @@ S = - J \sum_{x, mu>0} phi_{x} lambda_{x,mu} phi_{x+mu}
 Macro:
 
 DEBUG : several sanity checks are activated, which significantly slow-down the algorithm.
-GAUGE_FIX
 OPEN_BC : open boundary conditions
+GAUGE_FIX
+
 
 ** CONFIGURE PARAMETERS
 *****************************************************

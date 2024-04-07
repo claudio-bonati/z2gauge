@@ -207,17 +207,34 @@ void update(Conf * GC,
    long r, asum_link, asum_site;
    int dir;
 
+   #ifdef OPEN_BC
+   long counter=0;
+   #endif
+
    // metropolis on links
    asum_link=0;
    for(r=0; r<param->d_volume; r++)
       {
       for(dir=0; dir<STDIM; dir++)
          {
-         asum_link+=metropolis_for_link(GC, geo, param, r, dir);
+         #ifndef OPEN_BC
+           asum_link+=metropolis_for_link(GC, geo, param, r, dir);
+         #else
+           if(bcsitep(geo,r, dir)==1)
+             {
+             asum_link+=metropolis_for_link(GC, geo, param, r, dir);
+             counter++;
+             }
+         #endif
          }
       }
-   *acc_link=((double)asum_link)*param->d_inv_vol;
-   *acc_link/=(double)STDIM;
+   #ifndef OPEN_BC
+     *acc_link=((double)asum_link)*param->d_inv_vol;
+     *acc_link/=(double)STDIM;
+   #else
+     *acc_link=((double)asum_link)/(double)counter;
+     *acc_link/=(double)STDIM;
+   #endif
 
    // metropolis on sites
    asum_site=0;
