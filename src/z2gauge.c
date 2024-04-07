@@ -23,8 +23,8 @@ void real_main(char *in_file)
     FILE *datafilep;
 
     time_t time1, time2;
-    double acc_link;
-    double acc_link_local;
+    double acc_link, acc_site;
+    double acc_link_local, acc_site_local;
 
     // read input file
     readinput(in_file, &param);
@@ -43,17 +43,19 @@ void real_main(char *in_file)
 
     // acceptance
     acc_link=0.0;
+    acc_site=0.0;
 
     // montecarlo
     time(&time1);
     // count starts from 1 to avoid problems using %
     for(count=1; count < param.d_sample + 1; count++)
        {
-       update(&GC, &geo, &param, &acc_link_local);
+       update(&GC, &geo, &param, &acc_link_local, &acc_site_local);
 
        if(count>param.d_thermal)
          {
          acc_link+=acc_link_local;
+         acc_site+=acc_site_local;
          }
 
        if(count % param.d_measevery ==0 && count >= param.d_thermal)
@@ -78,6 +80,7 @@ void real_main(char *in_file)
     // montecarlo end
 
     acc_link/=(double)(param.d_sample-param.d_thermal);
+    acc_site/=(double)(param.d_sample-param.d_thermal);
 
     // close data file
     fclose(datafilep);
@@ -89,7 +92,7 @@ void real_main(char *in_file)
       }
 
     // print simulation details
-    print_parameters(&param, time1, time2, acc_link);
+    print_parameters(&param, time1, time2, acc_link, acc_site);
 
     // free configuration
     free_conf(&GC, &param);
@@ -126,6 +129,7 @@ void print_template_input(void)
       fprintf(fp, "quench_sample 100\n");
       fprintf(fp, "quench_thermal 10\n");
       fprintf(fp, "quench_measevery 10\n");
+      fprintf(fp,"\n");
     #endif
     fprintf(fp, "start                   0  # 0=ordered  1=random  2=from saved configuration\n");
     fprintf(fp, "saveconf_back_every     5  # if 0 does not save, else save backup configurations every ... updates\n");
@@ -159,6 +163,14 @@ int main (int argc, char **argv)
 
       #ifdef DEBUG
         printf("\n\tDEBUG mode\n");
+      #endif
+
+      #ifdef OPEN_BC
+        printf("\n\tOPEN_BC mode\n");
+      #endif
+
+      #ifdef GAUGE_FIX
+        printf("\n\tGAUGE_FIX mode\n");
       #endif
 
       printf("\n");

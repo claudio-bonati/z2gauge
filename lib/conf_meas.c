@@ -71,8 +71,9 @@ long plaquette(Conf const * const GC,
    }
 
 
-// compute the average value of Re[ phi_x^{dag} lambda_{x,mu} phi_{x+mu} ]
+// compute the average value of phi_x lambda_{x,mu} phi_{x+mu}
 long link(Conf const * const GC,
+          Geometry const * const geo,
           GParam const * const param)
   {
   int i;
@@ -83,7 +84,7 @@ long link(Conf const * const GC,
      {
      for(i=0; i<STDIM; i++)
         {
-        ris+= (GC->lambda[r][i]);
+        ris+= (GC->phi[r])*(GC->lambda[r][i])*(GC->phi[nnp(geo, r, i)]);
         }
      }
 
@@ -98,7 +99,7 @@ void perform_measures(Conf *GC,
    {
    long plaq, avlink;
 
-   avlink=link(GC, param);
+   avlink=link(GC, geo, param);
    plaq=plaquette(GC, geo, param);
 
    fprintf(datafilep, "%ld %ld ", avlink, plaq);

@@ -6,9 +6,10 @@
 ** ACTION
 *****************************************************
 
-The partition function is written as Z=\sum e^{-S}, lambda_{x,mu}=+1,-1
+The partition function is written as Z=\sum e^{-S}, 
+lambda_{x,mu}\in {-1,+1}, phi_{x}\in {-1,+1}
 
-S = - J \sum_{x, mu>0} lambda_{x,mu}
+S = - J \sum_{x, mu>0} phi_{x} lambda_{x,mu} phi_{x+mu}
     - K \sum_{plaq} plaq
 
 ### add gamma

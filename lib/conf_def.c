@@ -43,6 +43,21 @@ void init_conf(Conf *GC,
        exit(EXIT_FAILURE);
        }
      }
+  err=posix_memalign((void**) &(GC->phi), (size_t) INT_ALIGN, (size_t) param->d_volume * sizeof(int));
+  if(err!=0)
+    {
+    fprintf(stderr, "Problems in allocating the lattice! (%s, %d)\n", __FILE__, __LINE__);
+    exit(EXIT_FAILURE);
+    }
+
+  #ifdef GAUGE_FIX
+  err=posix_memalign((void**) &(GC->gauge), (size_t) INT_ALIGN, (size_t) param->d_volume * sizeof(int));
+  if(err!=0)
+    {
+    fprintf(stderr, "Problems in allocating the lattice! (%s, %d)\n", __FILE__, __LINE__);
+    exit(EXIT_FAILURE);
+    }
+  #endif
 
   // initialize lattice
   if(param->d_start==0) // ordered start
@@ -51,6 +66,7 @@ void init_conf(Conf *GC,
 
     for(r=0; r<(param->d_volume); r++)
        {
+       GC->phi[r]=1;
        for(j=0; j<STDIM; j++)
           {
           GC->lambda[r][j]=1;
@@ -70,6 +86,15 @@ void init_conf(Conf *GC,
 
     for(r=0; r<(param->d_volume); r++)
        {
+       if(casuale()>0.5)
+            {
+            GC->phi[r]=+1;
+            }
+          else
+            {
+            GC->phi[r]=-1;
+            }
+
        for(j=0; j<STDIM; j++)
           {
           if(casuale()>0.5)
@@ -194,6 +219,17 @@ void read_conf(Conf *GC, GParam const * const param)
             }
           }
        }
+
+    for(r=0; r<param->d_volume; r++)
+       {
+       err=read_from_binary_file_bigen_int(fp, &(GC->phi[r]));
+       if(err!=0)
+         {
+         fprintf(stderr, "Error in reading the file %s (%s, %d)\n", param->d_conf_file, __FILE__, __LINE__);
+         exit(EXIT_FAILURE);
+         }
+       }
+
     fclose(fp);
 
     // compute the new md5sum and check for consistency
@@ -209,13 +245,19 @@ void read_conf(Conf *GC, GParam const * const param)
 
 void free_conf(Conf *GC, GParam const * const param)
   {
-  long i;
+  long r;
 
-  for(i=0; i<(param->d_volume); i++)
+  for(r=0; r<(param->d_volume); r++)
      {
-     free(GC->lambda[i]);
+     free(GC->lambda[r]);
      }
   free(GC->lambda);
+
+  free(GC->phi);
+
+  #ifdef GAUGE_FIX
+    free(GC->gauge);
+  #endif
   }
 
 
@@ -268,6 +310,17 @@ void write_conf_on_file_with_name(Conf const * const GC,
             }
           }
        }
+
+    for(r=0; r<param->d_volume; r++)
+       {
+       err=print_on_binary_file_bigen_int(fp, GC->phi[r] );
+       if(err!=0)
+         {
+         fprintf(stderr, "Error in writing the file %s (%s, %d)\n", namefile, __FILE__, __LINE__);
+         exit(EXIT_FAILURE);
+         }
+       }
+
     fclose(fp);
     }
   }
@@ -324,6 +377,19 @@ void compute_md5sum_conf(char *res, Conf const * const GC, GParam const * const 
         MD5_Update(&mdContext, &i, sizeof(int));
         }
      }
+
+  for(r=0; r<param->d_volume; r++)
+     {
+     i=GC->phi[r];
+
+     if(endian()==0) // little endian
+       {
+       SwapBytesInt(&i);
+       }
+
+     MD5_Update(&mdContext, &i, sizeof(int));
+     }
+
   MD5_Final(c, &mdContext);
 
   for(k = 0; k < MD5_DIGEST_LENGTH; k++)
@@ -331,7 +397,5 @@ void compute_md5sum_conf(char *res, Conf const * const GC, GParam const * const 
      sprintf(&(res[2*k]), "%02x", c[k]);
      }
   }
-
-
 
 #endif

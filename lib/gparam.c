@@ -357,7 +357,11 @@ void init_data_file(FILE **dataf, GParam const * const param)
 
 
 // print simulation parameters
-void print_parameters(GParam const * const param, time_t time_start, time_t time_end, double acc_link)
+void print_parameters(GParam const * const param,
+                      time_t time_start,
+                      time_t time_end,
+                      double acc_link,
+                      double acc_site)
     {
     FILE *fp;
     int i;
@@ -370,6 +374,14 @@ void print_parameters(GParam const * const param, time_t time_start, time_t time
 
     #ifdef DEBUG
      fprintf(fp, "DEBUG mode\n");
+    #endif
+
+    #ifdef OPEN_BC
+     fprintf(fp, "OPEN_BC mode\n");
+    #endif
+
+    #ifdef GAUGE_FIX
+     fprintf(fp, "GAUGE_FIX mode\n");
     #endif
 
     fprintf(fp,"\n");
@@ -397,6 +409,7 @@ void print_parameters(GParam const * const param, time_t time_start, time_t time
     fprintf(fp, "\n");
 
     fprintf(fp, "metropolis acceptance link: %.10lf\n", acc_link);
+    fprintf(fp, "metropolis acceptance site: %.10lf\n", acc_site);
     fprintf(fp, "\n");
 
     fprintf(fp, "randseed: %u\n", param->d_randseed);

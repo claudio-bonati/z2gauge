@@ -13,6 +13,8 @@ typedef struct Conf {
   long update_index;
 
   int **lambda;    // [volume][STDIM]
+  int *phi;        // [volume]
+  int *gauge;      // [volume]
   } Conf;
 
 // in conf_def.c
@@ -45,10 +47,18 @@ int metropolis_for_link(Conf *GC,
                         GParam const * const param,
                         long r,
                         int i);
+int staples_for_phi(Conf *GC,
+                    Geometry const * const geo,
+                    long r);
+int metropolis_for_phi(Conf *GC,
+                      Geometry const * const geo,
+                      GParam const * const param,
+                      long r);
 void update(Conf * GC,
             Geometry const * const geo,
             GParam const * const param,
-            double *acc_link);
+            double *acc_link,
+            double *acc_site);
 
 // in conf_meas.c
 int plaquette_single(Conf const * const GC,
@@ -60,7 +70,8 @@ long plaquette(Conf const * const GC,
                  Geometry const * const geo,
                  GParam const * const param);
 long link(Conf const * const GC,
-            GParam const * const param);
+          Geometry const * const geo,
+          GParam const * const param);
 void perform_measures(Conf *GC,
                       GParam const * const param,
                       Geometry const * const geo,

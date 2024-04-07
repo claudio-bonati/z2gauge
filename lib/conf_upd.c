@@ -70,25 +70,25 @@ int metropolis_for_link(Conf *GC,
   #endif
 
   #ifdef DEBUG
-  diff_link=link(GC, param);
+  diff_link=-link(GC, geo, param);
   GC->lambda[r][i]*=-1;
-  diff_link-=link(GC, param); //old-new
-  GC->lambda[r][i]*=-1;
-
-  diff_plaq=plaquette(GC, geo, param);
-  GC->lambda[r][i]*=-1;
-  diff_plaq-=plaquette(GC, geo, param); //old-new
+  diff_link+=link(GC, geo, param); //new-old
   GC->lambda[r][i]*=-1;
 
-  deltaE=(param->d_J)*(double)diff_link+(param->d_K)*(double)diff_plaq;
+  diff_plaq=-plaquette(GC, geo, param);
+  GC->lambda[r][i]*=-1;
+  diff_plaq+=plaquette(GC, geo, param); //new-old
+  GC->lambda[r][i]*=-1;
+
+  deltaE=-(param->d_J)*(double)diff_link-(param->d_K)*(double)diff_plaq;
   #endif
 
   old_lambda=GC->lambda[r][i];
 
   pstaple=plaqstaples_for_link(GC, geo, r, i);
 
-  old_energy=-(param->d_J)*(double)old_lambda;
-  old_energy-=param->d_K*(double)old_lambda*(double)pstaple;
+  old_energy=-(param->d_J)*(double)(old_lambda* GC->phi[r] * GC->phi[nnp(geo, r, i)] );
+  old_energy-=param->d_K*(double) (old_lambda*pstaple );
 
   new_lambda = -old_lambda;
 
@@ -118,13 +118,93 @@ int metropolis_for_link(Conf *GC,
   }
 
 
+// staples for phi
+int staples_for_phi(Conf *GC,
+                    Geometry const * const geo,
+                    long r)
+  {
+  int j;
+  int ris;
+
+  ris=0;
+
+  for(j=0; j<STDIM; j++)
+     {
+     ris+=GC->lambda[r][j]*GC->phi[nnp(geo, r, j)];
+     ris+=GC->lambda[nnm(geo,r,j)][j]*GC->phi[nnm(geo, r, j)];
+     }
+
+    return ris;
+    }
+
+
+// perform an update with metropolis of the phi variable
+// retrn 0 if the trial state is rejected and 1 otherwise
+int metropolis_for_phi(Conf *GC,
+                      Geometry const * const geo,
+                      GParam const * const param,
+                      long r)
+  {
+  double old_energy, new_energy;
+  int old_phi, new_phi, staple;
+  int acc=0;
+
+  #ifdef DEBUG
+  long diff_link;
+  double deltaE, deltaEtest;
+  #endif
+
+  #ifdef DEBUG
+  diff_link=-link(GC, geo, param);
+  GC->phi[r]*=-1;
+  diff_link+=link(GC, geo, param); //new-old
+  GC->phi[r]*=-1;
+
+  deltaE=-(param->d_J)*(double)diff_link;
+  #endif
+
+  old_phi=GC->phi[r];
+
+  staple=staples_for_phi(GC, geo, r);
+
+  old_energy=-(param->d_J)*old_phi*staple;
+
+  new_phi = -old_phi;
+
+  new_energy=-old_energy;
+
+  #ifdef DEBUG
+  deltaEtest=new_energy-old_energy-deltaE;
+  if(fabs(deltaEtest)>MIN_VALUE)
+    {
+    fprintf(stderr, "Error in Metropolis step [deltaEtest=%lg] (%s, %d)\n", deltaEtest, __FILE__, __LINE__);
+    exit(EXIT_FAILURE);
+    }
+  #endif
+
+  if(old_energy>new_energy)
+    {
+    GC->phi[r] = new_phi;
+    acc=1;
+    }
+  else if(casuale()< exp(old_energy-new_energy) )
+         {
+         GC->phi[r] = new_phi;
+         acc=1;
+         }
+
+  return acc;
+  }
+
+
 // perform a complete update
 void update(Conf * GC,
             Geometry const * const geo,
             GParam const * const param,
-            double *acc_link)
+            double *acc_link,
+            double *acc_site)
    {
-   long r, asum_link;
+   long r, asum_link, asum_site;
    int dir;
 
    // metropolis on links
@@ -138,6 +218,14 @@ void update(Conf * GC,
       }
    *acc_link=((double)asum_link)*param->d_inv_vol;
    *acc_link/=(double)STDIM;
+
+   // metropolis on sites
+   asum_site=0;
+   for(r=0; r<param->d_volume; r++)
+      {
+      asum_site+=metropolis_for_phi(GC, geo, param, r);
+      }
+   *acc_site=((double)asum_site)*param->d_inv_vol;
 
    GC->update_index++;
    }
