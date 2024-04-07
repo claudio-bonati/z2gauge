@@ -18,13 +18,17 @@ void real_main(char *in_file)
     Conf GC;
     Geometry geo;
     GParam param;
+    #ifdef GAUGE_FIX
+     Conf GC2;
+    #endif
 
-    long count;
+    long count, count2;
     FILE *datafilep;
 
     time_t time1, time2;
     double acc_link, acc_site;
     double acc_link_local, acc_site_local;
+    double quench_acc=0.0;
 
     // read input file
     readinput(in_file, &param);
@@ -40,13 +44,20 @@ void real_main(char *in_file)
 
     // initialize configuration
     init_conf(&GC, &geo, &param);
+    #ifdef GAUGE_FIX
+      init_conf(&GC2, &geo, &param);
+    #endif
 
     // acceptance
     acc_link=0.0;
     acc_site=0.0;
 
+    // counter of measures
+    count2=0;
+
     // montecarlo
     time(&time1);
+
     // count starts from 1 to avoid problems using %
     for(count=1; count < param.d_sample + 1; count++)
        {
@@ -60,7 +71,13 @@ void real_main(char *in_file)
 
        if(count % param.d_measevery ==0 && count >= param.d_thermal)
          {
-         perform_measures(&GC, &param, &geo, datafilep);
+         count2++;
+
+         #ifndef GAUGE_FIX
+           perform_measures(&GC, &param, &geo, datafilep);
+         #else
+           quench_acc += glass_evolution_and_meas(&GC, &GC2, &param, &geo, datafilep);
+         #endif
          }
 
        // save configuration for backup
@@ -81,6 +98,7 @@ void real_main(char *in_file)
 
     acc_link/=(double)(param.d_sample-param.d_thermal);
     acc_site/=(double)(param.d_sample-param.d_thermal);
+    quench_acc/=(double)(count2);
 
     // close data file
     fclose(datafilep);
@@ -92,10 +110,13 @@ void real_main(char *in_file)
       }
 
     // print simulation details
-    print_parameters(&param, time1, time2, acc_link, acc_site);
+    print_parameters(&param, time1, time2, acc_link, acc_site, quench_acc);
 
     // free configuration
     free_conf(&GC, &param);
+    #ifdef GAUGE_FIX
+      free_conf(&GC2, &param);
+    #endif
 
     // free geometry
     free_geometry(&geo, &param);

@@ -247,4 +247,140 @@ void update(Conf * GC,
    GC->update_index++;
    }
 
+
+// staples for gauge
+int staples_for_gauge(Conf *GC,
+                      Geometry const * const geo,
+                      long r)
+  {
+  int j;
+  int ris;
+
+  ris=0;
+
+  for(j=0; j<STDIM; j++)
+     {
+     ris+=GC->lambda[r][j]*GC->gauge[nnp(geo, r, j)];
+     ris+=GC->lambda[nnm(geo,r,j)][j]*GC->gauge[nnm(geo, r, j)];
+     }
+
+    return ris;
+    }
+
+
+// perform an update with metropolis of the gauge variable
+// retrn 0 if the trial state is rejected and 1 otherwise
+int metropolis_for_gauge(Conf *GC,
+                         Geometry const * const geo,
+                         GParam const * const param,
+                         long r)
+  {
+  double old_energy, new_energy;
+  int old_gauge, new_gauge, staple;
+  int acc=0;
+
+
+  staple=staples_for_gauge(GC, geo, r);
+
+  old_gauge=GC->gauge[r];
+  old_energy=-(param->d_quench_gamma)*old_gauge*staple;
+
+  new_gauge = -old_gauge;
+  new_energy=-old_energy;
+
+  if(old_energy>new_energy)
+    {
+    GC->gauge[r] = new_gauge;
+    acc=1;
+    }
+  else if(casuale()< exp(old_energy-new_energy) )
+         {
+         GC->gauge[r] = new_gauge;
+         acc=1;
+         }
+
+  return acc;
+  }
+
+
+// perform the gauge transformation update and perform measures
+// return acceptance rate of update
+double glass_evolution_and_meas(Conf *GC,
+                                Conf *GC2,
+                                GParam const * const param,
+                                Geometry const * const geo,
+                                FILE *datafilep)
+  {
+  int i, err;
+  long count, count2, r, nummeas, acc_loc;
+  double acc, buffer[3], buffer2[2], *data;
+
+  nummeas=(param->d_quench_sample-param->d_quench_thermal)/param->d_quench_measevery;
+
+  err=posix_memalign((void**) &(data), (size_t) DOUBLE_ALIGN, (size_t) (3*nummeas) * sizeof(double));
+  if(err!=0)
+    {
+    fprintf(stderr, "Problems in allocating the vector for measures! (%s, %d)\n", __FILE__, __LINE__);
+    exit(EXIT_FAILURE);
+    }
+
+  acc=0.0;
+
+  // intialize GC2 using GC
+  equal_conf(GC2, GC, param);
+
+  count2=0;
+  //update both GC and GC2 (gauge variables only)
+  for(count=1; count<=param->d_quench_sample; count++)
+     {
+     acc_loc=0;
+     for(r=0; r<param->d_volume; r++)
+        {
+        acc_loc+=metropolis_for_gauge(GC, geo, param, r);
+        acc_loc+=metropolis_for_gauge(GC2, geo, param, r);
+        }
+     acc+=((double)acc_loc)*param->d_inv_vol*0.5;
+
+     if(count % param->d_quench_measevery ==0 && count >= param->d_quench_thermal)
+       {
+       gauge_apply(GC, geo, param);
+       perform_vec_measures_buffer(GC, param, geo, buffer);
+       gauge_apply(GC, geo, param);
+
+       gauge_apply(GC2, geo, param);
+       perform_vec_measures_buffer(GC2, param, geo, buffer2);
+       gauge_apply(GC2, geo, param);
+
+       for(i=0; i<2; i++)
+          {
+          buffer[i]+=buffer2[i];
+          buffer[i]*=0.5;
+          }
+
+       perform_overlap_measures_buffer(GC, GC2, param, geo, &(buffer[2]));
+
+       for(i=0; i<3; i++)
+          {
+          data[3*count2+i]=buffer[i];
+          }
+
+       count2++;
+       }
+     }
+
+  acc/=(double)param->d_quench_sample;
+
+  for(r=0; r<3*nummeas; r++)
+     {
+     fprintf(datafilep, "%.12lf ", data[r]);
+     }
+  fprintf(datafilep, "\n");
+  fflush(datafilep);
+
+  free(data);
+
+  return acc;
+  }
+
+
 #endif

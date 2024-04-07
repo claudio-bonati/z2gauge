@@ -53,6 +53,7 @@ void print_parameters(GParam const * const param,
                       time_t time_start,
                       time_t time_end,
                       double acc_link,
-                      double acc_site);
+                      double acc_site,
+                      double quench_acc);
 
 #endif

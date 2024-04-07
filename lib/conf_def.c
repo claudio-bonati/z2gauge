@@ -67,6 +67,11 @@ void init_conf(Conf *GC,
     for(r=0; r<(param->d_volume); r++)
        {
        GC->phi[r]=1;
+
+       #ifdef GAUGE_FIX
+         GC->gauge[r]=1;
+       #endif
+
        for(j=0; j<STDIM; j++)
           {
           GC->lambda[r][j]=1;
@@ -95,6 +100,10 @@ void init_conf(Conf *GC,
             GC->phi[r]=-1;
             }
 
+       #ifdef GAUGE_FIX
+         GC->gauge[r]=1;
+       #endif
+
        for(j=0; j<STDIM; j++)
           {
           if(casuale()>0.5)
@@ -120,6 +129,13 @@ void init_conf(Conf *GC,
     {
     read_conf(GC, param);
 
+    #ifdef GAUGE_FIX
+    for(r=0; r<(param->d_volume); r++)
+       {
+       GC->gauge[r]=1;
+       }
+    #endif
+
     #ifdef OPEN_BC
     for(r=0; r<(param->d_volume); r++)
        {
@@ -135,6 +151,27 @@ void init_conf(Conf *GC,
     }
   }
 
+
+void equal_conf(Conf *GC2,
+                Conf const * const GC,
+                GParam const * const param)
+  {
+  long r;
+  int i;
+
+  GC2->update_index=GC->update_index;
+
+  for(r=0; r<param->d_volume; r++)
+     {
+     GC2->phi[r]=GC->phi[r];
+     GC2->gauge[r]=GC->gauge[r];
+
+     for(i=0; i<STDIM; i++)
+        {
+        GC2->lambda[r][i]=GC->lambda[r][i];
+        }
+     }
+  }
 
 
 void read_conf(Conf *GC, GParam const * const param)

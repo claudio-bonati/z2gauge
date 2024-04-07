@@ -42,6 +42,6 @@ z2gauge_SOURCES=./src/z2gauge.c \
                  ./include/macro.h \
                  $(random) 
 
-AM_CFLAGS = -O2 -Wall -Wextra -Werror -pedantic -Wconversion
+AM_CFLAGS = -O2 -Wall -Wextra -Werror -pedantic -Wconversion -std=c99
 
 CLEANFILES = dati.dat log.dat dati.log conf.dat* template_input.in 

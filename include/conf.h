@@ -21,6 +21,9 @@ typedef struct Conf {
 void init_conf(Conf *GC,
                Geometry const * const geo,
                GParam const * const param);
+void equal_conf(Conf *GC2,
+                Conf const *  const GC,
+                GParam const * const param);
 void read_conf(Conf *GC,
                GParam const * const param);
 void free_conf(Conf *GC,
@@ -60,6 +63,21 @@ void update(Conf * GC,
             double *acc_link,
             double *acc_site);
 
+int staples_for_gauge(Conf *GC,
+                      Geometry const * const geo,
+                      long r);
+int metropolis_for_gauge(Conf *GC,
+                         Geometry const * const geo,
+                         GParam const * const param,
+                         long r);
+double glass_evolution_and_meas(Conf *GC,
+                                Conf *GC2,
+                                GParam const * const param,
+                                Geometry const * const geo,
+                                FILE *datafilep);
+
+
+
 // in conf_meas.c
 int plaquette_single(Conf const * const GC,
                      Geometry const * const geo,
@@ -76,5 +94,18 @@ void perform_measures(Conf *GC,
                       GParam const * const param,
                       Geometry const * const geo,
                       FILE *datafilep);
+void gauge_apply(Conf *GC,
+                 Geometry const * const geo,
+                 GParam const * const param);
+void perform_vec_measures_buffer(Conf *GC,
+                                 GParam const * const param,
+                                 Geometry const * const geo,
+                                 double buffer[2]);
+void perform_overlap_measures_buffer(Conf const * const GC,
+                                     Conf const * const GC2,
+                                     GParam const * const param,
+                                     Geometry const * const geo,
+                                     double* buffer);
+
 
 #endif
