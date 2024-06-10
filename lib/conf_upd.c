@@ -311,13 +311,13 @@ double glass_evolution_and_meas(Conf *GC,
                                 Geometry const * const geo,
                                 FILE *datafilep)
   {
-  int i, err;
+  int err;
   long count, count2, r, nummeas, acc_loc;
-  double acc, buffer[3], buffer2[2], *data;
+  double acc, buffer[4], buffer2[2], *data;
 
   nummeas=(param->d_quench_sample-param->d_quench_thermal)/param->d_quench_measevery;
 
-  err=posix_memalign((void**) &(data), (size_t) DOUBLE_ALIGN, (size_t) (3*nummeas) * sizeof(double));
+  err=posix_memalign((void**) &(data), (size_t) DOUBLE_ALIGN, (size_t) (6*nummeas) * sizeof(double));
   if(err!=0)
     {
     fprintf(stderr, "Problems in allocating the vector for measures! (%s, %d)\n", __FILE__, __LINE__);
@@ -341,28 +341,20 @@ double glass_evolution_and_meas(Conf *GC,
         }
      acc+=((double)acc_loc)*param->d_inv_vol*0.5;
 
-     if(count % param->d_quench_measevery ==0 && count >= param->d_quench_thermal)
+     if(count % param->d_quench_measevery ==0 && count > param->d_quench_thermal)
        {
        gauge_apply(GC, geo, param);
        perform_vec_measures_buffer(GC, param, geo, buffer);
        gauge_apply(GC, geo, param);
 
-       gauge_apply(GC2, geo, param);
-       perform_vec_measures_buffer(GC2, param, geo, buffer2);
-       gauge_apply(GC2, geo, param);
+       perform_overlap_measures_buffer(GC, GC2, param, geo, buffer2);
 
-       for(i=0; i<2; i++)
-          {
-          buffer[i]+=buffer2[i];
-          buffer[i]*=0.5;
-          }
-
-       perform_overlap_measures_buffer(GC, GC2, param, geo, &(buffer[2]));
-
-       for(i=0; i<3; i++)
-          {
-          data[3*count2+i]=buffer[i];
-          }
+       data[6*count2+0]=buffer[0]; // vector p=0
+       data[6*count2+1]=buffer[1]; // vector pmin
+       data[6*count2+2]=buffer[2]; // gauge p=0
+       data[6*count2+3]=buffer[3]; // gauge pmin
+       data[6*count2+4]=buffer2[0]; // overlap p=0
+       data[6*count2+5]=buffer2[1]; // overlap pmin
 
        count2++;
        }
@@ -370,7 +362,7 @@ double glass_evolution_and_meas(Conf *GC,
 
   acc/=(double)param->d_quench_sample;
 
-  for(r=0; r<3*nummeas; r++)
+  for(r=0; r<6*nummeas; r++)
      {
      fprintf(datafilep, "%.12lf ", data[r]);
      }
