@@ -313,11 +313,11 @@ double glass_evolution_and_meas(Conf *GC,
   {
   int err;
   long count, count2, r, nummeas, acc_loc;
-  double acc, buffer[4], buffer2[2], *data;
+  double acc, buffer[2], buffer2[2], *data;
 
   nummeas=(param->d_quench_sample-param->d_quench_thermal)/param->d_quench_measevery;
 
-  err=posix_memalign((void**) &(data), (size_t) DOUBLE_ALIGN, (size_t) (6*nummeas) * sizeof(double));
+  err=posix_memalign((void**) &(data), (size_t) DOUBLE_ALIGN, (size_t) (4*nummeas) * sizeof(double));
   if(err!=0)
     {
     fprintf(stderr, "Problems in allocating the vector for measures! (%s, %d)\n", __FILE__, __LINE__);
@@ -349,12 +349,10 @@ double glass_evolution_and_meas(Conf *GC,
 
        perform_overlap_measures_buffer(GC, GC2, param, geo, buffer2);
 
-       data[6*count2+0]=buffer[0]; // vector p=0
-       data[6*count2+1]=buffer[1]; // vector pmin
-       data[6*count2+2]=buffer[2]; // gauge p=0
-       data[6*count2+3]=buffer[3]; // gauge pmin
-       data[6*count2+4]=buffer2[0]; // overlap p=0
-       data[6*count2+5]=buffer2[1]; // overlap pmin
+       data[4*count2+0]=buffer[0]; // vector p=0
+       data[4*count2+1]=buffer[1]; // vector pmin
+       data[4*count2+2]=buffer2[0]; // overlap p=0
+       data[4*count2+3]=buffer2[1]; // overlap pmin
 
        count2++;
        }
@@ -362,7 +360,7 @@ double glass_evolution_and_meas(Conf *GC,
 
   acc/=(double)param->d_quench_sample;
 
-  for(r=0; r<6*nummeas; r++)
+  for(r=0; r<4*nummeas; r++)
      {
      fprintf(datafilep, "%.12lf ", data[r]);
      }

@@ -134,42 +134,32 @@ void gauge_apply(Conf *GC,
 void perform_vec_measures_buffer(Conf *GC,
                                  GParam const * const param,
                                  Geometry const * const geo,
-                                 double buffer[4])
+                                 double buffer[2])
    {
    (void) geo; // kept just for consistency with other measures
 
    int coord[STDIM];
    long r;
    const double p = 2.0*PI/(double)param->d_size[1];
-   double V, Vg;
-   double complex Vp, Vgp;
+   double V;
+   double complex Vp;
 
    // V =sum_x phi_x
    // Vp=sum_x e^{ipx}phi_x
    V=0.0;
    Vp=0.0+0.0*I;
 
-   // Vg= sum_x gauge_x
-   // Vpg=sum_x e^{ipx}gauge_x
-   Vg=0.0;
-   Vgp=0.0+0.0*I;
-
    for(r=0; r<(param->d_volume); r++)
       {
       V+=(double)GC->phi[r];
-      Vg+=(double)GC->gauge[r];
 
       si_to_cart(coord, r, param);
 
       Vp+=((double complex)GC->phi[r]) * cexp(I*((double)coord[1])*p);
-      Vgp+=((double complex)GC->gauge[r]) * cexp(I*((double)coord[1])*p);
       }
 
    buffer[0]=V*V*param->d_inv_vol; // tildeG0 phi
    buffer[1]=cabs(Vp)*cabs(Vp)*param->d_inv_vol; // tildeGminp phi
-
-   buffer[2]=Vg*Vg*param->d_inv_vol; // tildeG0 gauge
-   buffer[3]=cabs(Vgp)*cabs(Vgp)*param->d_inv_vol; // tildeGminp gauge
    }
 
 

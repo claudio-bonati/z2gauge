@@ -100,7 +100,7 @@ void gauge_apply(Conf *GC,
 void perform_vec_measures_buffer(Conf *GC,
                                  GParam const * const param,
                                  Geometry const * const geo,
-                                 double buffer[4]);
+                                 double buffer[2]);
 void perform_overlap_measures_buffer(Conf const * const GC,
                                      Conf const * const GC2,
                                      GParam const * const param,
