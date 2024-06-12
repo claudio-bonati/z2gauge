@@ -164,7 +164,9 @@ void equal_conf(Conf *GC2,
   for(r=0; r<param->d_volume; r++)
      {
      GC2->phi[r]=GC->phi[r];
-     GC2->gauge[r]=GC->gauge[r];
+
+     // gauge is not copied!
+     //GC2->gauge[r]=GC->gauge[r];
 
      for(i=0; i<STDIM; i++)
         {
