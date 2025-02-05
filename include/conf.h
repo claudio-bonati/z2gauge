@@ -90,6 +90,9 @@ long plaquette(Conf const * const GC,
 long link(Conf const * const GC,
           Geometry const * const geo,
           GParam const * const param);
+double polyakov(Conf const * const GC,
+                Geometry const * const geo,
+                GParam const * const param);
 void perform_measures(Conf *GC,
                       GParam const * const param,
                       Geometry const * const geo,

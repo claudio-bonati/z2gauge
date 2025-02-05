@@ -93,17 +93,49 @@ long link(Conf const * const GC,
   }
 
 
+// compute the average value of the polyakov loop
+double polyakov(Conf const * const GC,
+          Geometry const * const geo,
+          GParam const * const param)
+  {
+  int i, tmp;
+  long r, r1;
+  double ris;
+
+  ris=0;
+  for(r=0; r<(param->d_volume/param->d_size[0]); r++)
+     {
+     tmp=1;
+     r1=r;
+     for(i=0; i<param->d_size[0]; i++)
+        {
+        tmp*=GC->lambda[r1][0];
+        r1=nnp(geo, r1, 0);
+        }
+     ris+=tmp;
+     }
+  ris/=(double) (param->d_volume/param->d_size[0]);
+
+  return ris;
+  }
+
+
 void perform_measures(Conf *GC,
                       GParam const * const param,
                       Geometry const * const geo,
                       FILE *datafilep)
    {
    long plaq, avlink;
+   double energydens, poly;
 
    avlink=link(GC, geo, param);
    plaq=plaquette(GC, geo, param);
+   poly=polyakov(GC, geo, param);
 
-   fprintf(datafilep, "%ld %ld ", avlink, plaq);
+   energydens=param->d_K*(double)plaq*(double)STDIM*(double)(STDIM-1)/2.0/(double)param->d_volume;
+   energydens+=param->d_J*(double)avlink/(double)param->d_volume;
+
+   fprintf(datafilep, "%.15lf %.15lf ", energydens, poly);
    fprintf(datafilep, "\n");
 
    fflush(datafilep);
