@@ -95,14 +95,13 @@ long link(Conf const * const GC,
 
 // compute the average value of the polyakov loop
 double polyakov(Conf const * const GC,
-          Geometry const * const geo,
-          GParam const * const param)
+                Geometry const * const geo,
+                GParam const * const param)
   {
   int i, tmp;
   long r, r1;
-  double ris;
+  double ris=0.0;
 
-  ris=0;
   for(r=0; r<(param->d_volume/param->d_size[0]); r++)
      {
      tmp=1;
@@ -112,7 +111,7 @@ double polyakov(Conf const * const GC,
         tmp*=GC->lambda[r1][0];
         r1=nnp(geo, r1, 0);
         }
-     ris+=tmp;
+     ris+=(double)tmp;
      }
   ris/=(double) (param->d_volume/param->d_size[0]);
 
