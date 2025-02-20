@@ -131,10 +131,10 @@ void perform_measures(Conf *GC,
    plaq=plaquette(GC, geo, param);
    poly=polyakov(GC, geo, param);
 
-   energydens=param->d_K*(double)plaq*(double)STDIM*(double)(STDIM-1)/2.0/(double)param->d_volume;
+   energydens=param->d_K*(double)plaq/(double)param->d_volume;
    energydens+=param->d_J*(double)avlink/(double)param->d_volume;
 
-   fprintf(datafilep, "%.15lf %.15lf ", energydens, poly);
+   fprintf(datafilep, "%.15lf %.15lf ", energydens , poly);
    fprintf(datafilep, "\n");
 
    fflush(datafilep);
